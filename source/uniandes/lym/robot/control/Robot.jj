@@ -38,7 +38,7 @@ public class Robot
 
 
 	private RobotWorldDec world;
-	
+	static HashMap<String,String> Variables = new HashMap< >();
 	
 	void setWorld(RobotWorld w) {
 		world = (RobotWorldDec) w;	
@@ -56,22 +56,52 @@ SKIP:
 	| "\n"
 }
 
-TOKEN: /* Nombres de Comandos */
+TOKEN [IGNORE_CASE]: /* Nombres de Comandos */
 {
 
-			<MOV:  "Mov">
-		| 	<RIGHT: "RIGHT">
+			<MOV:  "Move">
 		| 	<PUT: "Put">
 		| 	<PICK: "Pick">
 		|  < POP: "Pop" >
 		|  <GO: "GO" >
-        |  < HOP:  "HOP" >		
+        |  < SKIP:  "Skip" >
+        
+        | < DEFVAR: "Defvar" >
+        | < DEFUN:"Defun" >
 
-}
+        
+        | < TURN: "Turn" >
+        | < FACE: "Face" >
+        | < MOVE-DIR: "Move-dir" >
+        | < RUN-DIRS: "run-dirs" >
+        | < MOVE-FACE:"Move-face" >
+        | < NULL : "Null" >
 
-TOKEN:
-{
-		<BALLOONS:  "BALLOONS" >
+        | < FRONT:"Front" >
+        | < RIGHT:"Right" >
+        | < LEFT:"Left" >
+        | < BACK:"Back" >
+
+
+
+        | < NORTH:"North" >
+        | < SOUTH: "South" >
+        | < WEST:"West" >
+        | < EAST:"East" >
+
+
+        |< IF:"If" >
+        |< REPEAT:"Repeat" >
+
+        | < FACING:"Facing" >
+        | < BLOCKED:"Blocked" >
+        | < CAN-PUT:"Can-put" >
+        | < CAN-MOVE:"Can-move" >
+        | < ZERO:"IsZero" >
+        | < NOT:"Not" >
+
+
+		| <BALLOONS:  "BALLOONS" >
 		|	<CHIPS:     "CHIPS"  >	
 
 }
@@ -80,8 +110,10 @@ TOKEN:
 
 TOKEN :
 {
-		<NUM: (<DIGIT>)+ >
-		|  	<#DIGIT: ["0"-"9"] >
+		 < CHAR : (< LETTER >)+ >
+		| < CONSTANT : (< DIGIT >)+ >
+		| <#DIGIT: ["0"-"9"] >
+		| < #LETTER : ["a" - "z", "A" - "Z"] >
         
 }
 
@@ -100,7 +132,7 @@ TOKEN :
 		(		  (
 		   <RIGHT> "(" ")" {world.turnRight();salida = "Command: Turnright";}
 		| 	<MOV>  "(" x=num() ")" {world.moveForward(x,false);salida = "Command: Moveforward ";}  
-		| 	<HOP>  "(" x=num() ")" {world.moveForward(x,true);salida = "Command:Jumpforward ";}
+		| 	<SKIP>  "(" x=num() ")" {world.moveForward(x,true);salida = "Command:Jumpforward ";}
 		| 	<GO>  "(" x=num() "," y=num()")" {world.setPostion(x,y);salida = "Command:GO ";}  
 		|  <PUT> "("  put() ")"					  			
 		|  <PICK> "(" get()  ")"	
@@ -155,7 +187,7 @@ TOKEN :
 		int total=1;
 	}
 	{
-		<NUM>
+		<CONSTANT>
 		{
 			try 
 			{
@@ -168,5 +200,32 @@ TOKEN :
 			return total;
 		}
 	}
+	void basicos(): { }
+	{
+	  
+	}
+	
+	void declaroVariables(): { }
+{
+	< DEFVAR > < CHAR > { String key = token.image; }
+  (
+    < CONSTANT > { String value = token.image; }
+    
+  )
+  {
+    Variables.put(key, value);
+  }
+
+}
+void getValor(): { }
+{
+   <CHAR >
+  { 
+    String valor = token.image; 
+    if (!Variables.containsKey(valor)) {
+    throw new ParseException("\nUndefined variable");
+}
+  }
+}
 
 	
