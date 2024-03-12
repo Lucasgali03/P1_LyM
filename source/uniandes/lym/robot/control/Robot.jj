@@ -140,7 +140,7 @@ TOKEN :
 		| declaroVariable() { salida = "Command: Defvar"; }
 		| { salida= direction(salida) }
 		| { salida= movDir(salida) }
-		{ salida= rundir(salida) }
+		| { salida= rundir(salida) }
 		| 	<GO>  "(" x=num() "," y=num()")" {world.setPostion(x,y);salida = "Command:GO ";}  
 		|  <PUT> <DP >put() 					  			
 		|  <PICK> <DP >get()	
