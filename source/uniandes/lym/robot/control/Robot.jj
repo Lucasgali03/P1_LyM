@@ -64,7 +64,7 @@ TOKEN [IGNORE_CASE]: /* Nombres de Comandos */
 		| 	<PICK: "Pick">
 		|  < POP: "Pop" >
 		|  <GO: "GO" >
-        |  < SKIP:  "Skip" >
+        |  < SKP:  "Skip" >
         
         | < DEFVAR: "Defvar" >
         | < DEFUN:"Defun" >
@@ -211,7 +211,7 @@ TOKEN :
 	String basicos(int x, String salida): { }
 	{
 	  (< MOV > (x=num()|x= getValor()) {world.moveForward(x,false);salida = "Command: Moveforward ";} 
-	  |< SKIP >(x=num()|x= getValor()) {world.moveForward(x,true);salida = "Command:Jumpforward ";}	  )
+	  |< SKP >(x=num()|x= getValor()) {world.moveForward(x,true);salida = "Command:Jumpforward ";}	  )
 	  { return salida; }
 	}
 	String direction(String salida): { }
