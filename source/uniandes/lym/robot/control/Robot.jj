@@ -103,6 +103,7 @@ TOKEN [IGNORE_CASE]: /* Nombres de Comandos */
         | < DP:":" >
         | < LB:"(" >
         | < RB:")" >
+        | < Q:"?" >
 
 
 		| <BALLOONS:  "BALLOONS" >
