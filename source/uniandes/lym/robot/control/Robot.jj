@@ -72,9 +72,9 @@ TOKEN [IGNORE_CASE]: /* Nombres de Comandos */
         
         | < TURN: "Turn" >
         | < FACE: "Face" >
-        | < MOVE-DIR: "Move-dir" >
-        | < RUN-DIRS: "run-dirs" >
-        | < MOVE-FACE:"Move-face" >
+        | < MOVEDIR: "Move-dir" >
+        | < RUNDIRS: "run-dirs" >
+        | < MOVEFACE:"Move-face" >
         | < NULL : "Null" >
 
         | < FRONT:"Front" >
@@ -95,8 +95,8 @@ TOKEN [IGNORE_CASE]: /* Nombres de Comandos */
 
         | < FACING:"Facing" >
         | < BLOCKED:"Blocked" >
-        | < CAN-PUT:"Can-put" >
-        | < CAN-MOVE:"Can-move" >
+        | < CANPUT:"Can-put" >
+        | < CANMOVE:"Can-move" >
         | < ZERO:"IsZero" >
         | < NOT:"Not" >
 
@@ -248,13 +248,13 @@ TOKEN :
 	String movDir(String salida): { }
 	{
 	  
-	(	  < MOVE-DIR >(x=num()|x= getValor()) apuntar(){world.moveForward(x,false);salida = "Command: MOVE-DOR ";}
-	|  < MOVE-FACE >(x=num()|x= getValor()) apuntarDic(){world.moveForward(x,false);salida = "Command: MOVE-FACE";}
+	(	  < MOVEDIR >(x=num()|x= getValor()) apuntar(){world.moveForward(x,false);salida = "Command: MOVE-DOR ";}
+	|  < MOVEFACE >(x=num()|x= getValor()) apuntarDic(){world.moveForward(x,false);salida = "Command: MOVE-FACE";}
 	)     { return salida; }}
 
 	String rundir(String salida): { }
 	{
-	  < RUN-DIRS > (apuntar())+{world.moveForward(x,false);salida = "Command: RUN-DIRS ";}
+	  < RUNDIRS > (apuntar())+{world.moveForward(x,false);salida = "Command: RUN-DIRS ";}
 	  { return salida; }}
 	}
 	
