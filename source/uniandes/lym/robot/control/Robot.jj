@@ -100,6 +100,10 @@ TOKEN [IGNORE_CASE]: /* Nombres de Comandos */
         | < ZERO:"IsZero" >
         | < NOT:"Not" >
 
+        | < DP:":" >
+        | < LB:"(" >
+        | < RB:")" >
+
 
 		| <BALLOONS:  "BALLOONS" >
 		|	<CHIPS:     "CHIPS"  >	
@@ -129,15 +133,18 @@ TOKEN :
 
 	
 	{
-		(		  (
-		   <RIGHT> "(" ")" {world.turnRight();salida = "Command: Turnright";}
-		| 	<MOV>  "(" x=num() ")" {world.moveForward(x,false);salida = "Command: Moveforward ";}  
-		| 	<SKIP>  "(" x=num() ")" {world.moveForward(x,true);salida = "Command:Jumpforward ";}
+		(		  < LB >(
+		  
+		 	{ salida =basicos(x,salida) }
+		| declaroVariable() { salida = "Command: Defvar"; }
+		| { salida= direction(salida) }
+		| { salida= movDir(salida) }
+		{ salida= rundir(salida) }
 		| 	<GO>  "(" x=num() "," y=num()")" {world.setPostion(x,y);salida = "Command:GO ";}  
-		|  <PUT> "("  put() ")"					  			
-		|  <PICK> "(" get()  ")"	
+		|  <PUT> <DP >put() 					  			
+		|  <PICK> <DP >get()	
 	    |  < POP > "(" x=num() ")" {world.popBalloons(x); salida = "Comando:  Pop";}
-		) ";" 
+		) < RB >
 
 		{
 		    try {
@@ -158,8 +165,8 @@ TOKEN :
 		int f=1;	
 	}
 	{
-		( <CHIPS>    "," f=num() {world.putChips(f); salida = "Command:  Put Chips"; })
-		|  	  ( <BALLOONS>   "," f=num() {world.putBalloons(f); salida = "Command:  Put Balloons";})	 
+		( <CHIPS>    f=num() {world.putChips(f); salida = "Command:  Put Chips"; })
+		|  	  ( <BALLOONS>  f=num() {world.putBalloons(f); salida = "Command:  Put Balloons";})	 
 
 	}
 
@@ -200,9 +207,54 @@ TOKEN :
 			return total;
 		}
 	}
-	void basicos(): { }
+	String basicos(int x, String salida): { }
+	{
+	  (< MOV > (x=num()|x= getValor()) {world.moveForward(x,false);salida = "Command: Moveforward ";} 
+	  |< SKIP >(x=num()|x= getValor()) {world.moveForward(x,true);salida = "Command:Jumpforward ";}	  )
+	  { return salida; }
+	}
+	String direction(String salida): { }
 	{
 	  
+	  (< FACE >< DP >
+	  (< LEFT >
+	  | < RIGTH >{world.turnRight();salida = "Command: Turnright";}
+	  | < AROUND >)
+	  
+	| < TURN > apuntarDic()	  )
+	  { return salida; }
+	}
+	void apuntar(): { }
+	{
+	  //hacer que en world se apunte hacia una direccion
+	< DP >
+	(< FRONT >
+    |< RIGHT >
+    | < LEFT >
+    | < BACK > 	)
+	
+}
+	void apuntarDic(): { }
+	{
+	  //hacer que en world se apunte hacia una direccion
+	<DP >
+	(< NORTH > 
+	| < SOUTH >
+	| < EAST >
+	| < WEST >
+	)
+}
+	String movDir(String salida): { }
+	{
+	  
+	(	  < MOVE-DIR >(x=num()|x= getValor()) apuntar(){world.moveForward(x,false);salida = "Command: MOVE-DOR ";}
+	|  < MOVE-FACE >(x=num()|x= getValor()) apuntarDic(){world.moveForward(x,false);salida = "Command: MOVE-FACE";}
+	)     { return salida; }}
+
+	String rundir(String salida): { }
+	{
+	  < RUN-DIRS > (apuntar())+{world.moveForward(x,false);salida = "Command: RUN-DIRS ";}
+	  { return salida; }}
 	}
 	
 	void declaroVariables(): { }
