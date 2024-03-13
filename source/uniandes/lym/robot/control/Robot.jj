@@ -41,6 +41,7 @@ public class Robot
 	private RobotWorldDec world;
 	static HashMap<String,String> Variables = new HashMap< >();
 	static int x;
+	static boolean conde;
 	
 	void setWorld(RobotWorld w) {
 		world = (RobotWorldDec) w;	
@@ -98,6 +99,7 @@ TOKEN [IGNORE_CASE]: /* Nombres de Comandos */
 
         | < FACING:"Facing" >
         | < BLOCKED:"Blocked" >
+        | < CANPICK:"Can-pick" >
         | < CANPUT:"Can-put" >
         | < CANMOVE:"Can-move" >
         | < ZERO:"IsZero" >
@@ -137,18 +139,8 @@ TOKEN :
 
 	
 	{
-		(		  < LB >(
-		  
-		 	basicos(salida) 
-		| declaroVariables() { salida = "Command: Defvar"; }
-		| direction(salida)
-		| movDir(salida)
-		| rundir(salida)
-		| 	<GO>  <LB > x=num() "," y=num()< RB > {world.setPostion(x,y);salida = "Command:GO ";}  
-		|  <PUT> <DP >put() 					  			
-		|  <PICK> <DP >get()	
-	    |  < POP > <LB > x=num() < RB > {world.popBalloons(x); salida = "Comando:  Pop";}
-		) < RB >
+		(		  laCondicion(){ salida = "Command: IF"; }
+		  | todo()
 
 		{
 		    try {
@@ -163,7 +155,21 @@ TOKEN :
 
     	| <EOF> {return false;} 
 	}
-
+void todo(): { int x,y;}
+{
+  < LB >(
+		  
+		 	basicos(salida) 
+		| declaroVariables() { salida = "Command: Defvar"; }
+		| direction(salida)
+		| movDir(salida)
+		| rundir(salida)
+		| 	<GO>  <LB > x=num() "," y=num()< RB > {world.setPostion(x,y);salida = "Command:GO ";}  
+		|  <PUT> <DP >put() 					  			
+		|  <PICK> <DP >get()	
+	    |  < POP > <LB > x=num() < RB > {world.popBalloons(x); salida = "Comando:  Pop";}
+		) < RB >
+}
 	void put() :
 	{
 		int f=1;	
@@ -221,9 +227,9 @@ TOKEN :
 	{
 	  
 	  (< FACE >< DP >
-	  (< LEFT >
+	  (< LEFT >{world.turnRight();world.turnRight();world.turnRight();salida = "Command: TurnLeft";}
 	  | < RIGHT >{world.turnRight();salida = "Command: Turnright";}
-	  | < AROUND >)
+	  | < AROUND >{world.turnRight();world.turnRight();salida = "Command: TurnAround";})
 	  
 	| < TURN > apuntarDic()	  )
 	 
@@ -232,32 +238,102 @@ TOKEN :
 	{
 	  //hacer que en world se apunte hacia una direccion
 	< DP >
-	(< FRONT >
-    |< RIGHT >
-    | < LEFT >
-    | < BACK > 	)
+	(< FRONT > { salida = "Command:Front"; }
+      | < LEFT >{world.turnRight();world.turnRight();world.turnRight();salida = "Command: Left";}
+	  | < RIGHT >{world.turnRight();salida = "Command: right";}
+	  | < BACK >{world.turnRight();world.turnRight();salida = "Command: back";}	)
 	
 }
 	void apuntarDic(): { }
 	{
 	  //hacer que en world se apunte hacia una direccion
 	<DP >
-	(< NORTH > 
-	| < SOUTH >
-	| < EAST >
-	| < WEST >
-	)
+	(< NORTH >  ajustarDic( 0 )
+	| < SOUTH >ajustarDic( 1 )
+	| < EAST >ajustarDic( 2 )
+	| < WEST >ajustarDic( 3 )
+	) }
+	
+	void ajustarDic(int y): { }
+	{ { int apunt = world.getFacing();
+	// norte 
+	if (apunt == 0) {
+	  if(y == 1) {
+	    world.turnRight();
+	    world.turnRight();
+	  }
+	  else if(y == 2) {
+	    world.turnRight();
+	    
+	  }
+	  else if(y == 3) {
+	    world.turnRight();
+	    world.turnRight();
+	    world.turnRight();
+	  }
+	}
+	// sur
+	else if (apunt == 1) {
+	  if(y == 0) {
+	    world.turnRight();
+	    world.turnRight();
+	  }
+	  else if(y == 3) {
+	    world.turnRight();
+	    
+	  }
+	  else if(y == 1) {
+	    world.turnRight();
+	    world.turnRight();
+	    world.turnRight();
+	  }
+	}
+	// este 
+	else if (apunt == 2) {
+	  if(y == 3) {
+	    world.turnRight();
+	    world.turnRight();
+	  }
+	  else if(y == 1) {
+	    world.turnRight();
+	    
+	  }
+	  else if(y == 0) {
+	    world.turnRight();
+	    world.turnRight();
+	    world.turnRight();
+	  }
+	}
+	// oeste 
+	else if (apunt == 3) {
+	  if(y == 2) {
+	    world.turnRight();
+	    world.turnRight();
+	  }
+	  else if(y == 0) {
+	    world.turnRight();
+	    
+	  }
+	  else if(y == 1) {
+	    world.turnRight();
+	    world.turnRight();
+	    world.turnRight();
+	  }
+	}
+	
 }
+	}
+
 	void movDir(String salida): { }
 	{
 	  
-	(	  < MOVEDIR >(x=num()|x= getValor()) apuntar(){world.moveForward(x,false);salida = "Command: MOVE-DOR ";}
+	(	  < MOVEDIR >(x=num()|x= getValor()) apuntar(){world.moveForward(x,false);salida = "Command: MOVE-DIR ";}
 	|  < MOVEFACE >(x=num()|x= getValor()) apuntarDic(){world.moveForward(x,false);salida = "Command: MOVE-FACE";}
 	)     
 }
 	void rundir(String salida): { }
 	{
-	  < RUNDIRS > (apuntar())+{world.moveForward(x,false);salida = "Command: RUN-DIRS ";}
+	  < RUNDIRS > (apuntar())+
 	  
 	}
 	
@@ -287,5 +363,65 @@ int getValor(): { }
 
   }
 }
+boolean condiciones(): { }
+  {
+    (
+    < FACING ><Q > { return dondeve(); }
+  | < BLOCKED ><Q > { return bloqueado();}
+  | < CANPUT > <Q >(< CHIPS > (x=getValor()|x=num()) {if (world.getMyChips()<  x) { conde= false; } else { conde= true; } }
+  					|<BALLOONS>)(x=getValor()|x=num()){if (world.getMyBalloons()<  x) { conde= false; } else { conde= true; } }
+
+  
+  | < CANPICK ><Q >(< CHIPS > (x=getValor()|x=num()) { conde= recogerChips(x); }
+  					|<BALLOONS>)(x=getValor()|x=num()) { conde= recogerBallons(x);}
+  | < CANMOVE ><Q > apuntarDic() { }
+  | < ZERO > (x=getValor()|x=num()) {if (x!= 0) { conde= false; }else { conde= true; } }
+)  
+  }
+void laCondicion(): { }
+// falta revisar como hacer cuando la condicion sea falsa
+{< IF ><LB > condiciones() < RB > todo()
+
+}
+boolean recogerChips(int a ): { }
+{ {int chi = world.chipsToPick();
+	if (chi >= a) { return true;}
+  else { return false;}
+}
+}
+boolean recogerBallons(int a ): { }
+{ {
+  int globos = world.countBalloons(world.getPosition());
+  if (globos >= a) { return true;}
+  else { return false;}
 
 	
+}
+}
+boolean bloqueado(): { }
+{ {try {
+  world.moveForward(1,false);
+  world.moveForward(-1,false);
+  return false;
+} catch (Exception Error){
+  return true;
+}
+	
+}
+}
+
+boolean dondeve(): { }
+{
+  (< NORTH > { return world.facingNorth(); }
+	| < SOUTH >{ return world.facingSouth(); }
+	| < EAST >{ return world.facingEast(); }
+	| < WEST >{ return world.facingWest(); }
+	)
+}
+
+	
+
+
+
+
+

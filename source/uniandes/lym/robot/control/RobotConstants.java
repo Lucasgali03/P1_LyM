@@ -65,33 +65,35 @@ public interface RobotConstants {
   /** RegularExpression Id. */
   int BLOCKED = 31;
   /** RegularExpression Id. */
-  int CANPUT = 32;
+  int CANPICK = 32;
   /** RegularExpression Id. */
-  int CANMOVE = 33;
+  int CANPUT = 33;
   /** RegularExpression Id. */
-  int ZERO = 34;
+  int CANMOVE = 34;
   /** RegularExpression Id. */
-  int NOT = 35;
+  int ZERO = 35;
   /** RegularExpression Id. */
-  int DP = 36;
+  int NOT = 36;
   /** RegularExpression Id. */
-  int LB = 37;
+  int DP = 37;
   /** RegularExpression Id. */
-  int RB = 38;
+  int LB = 38;
   /** RegularExpression Id. */
-  int Q = 39;
+  int RB = 39;
   /** RegularExpression Id. */
-  int BALLOONS = 40;
+  int Q = 40;
   /** RegularExpression Id. */
-  int CHIPS = 41;
+  int BALLOONS = 41;
   /** RegularExpression Id. */
-  int CHAR = 42;
+  int CHIPS = 42;
   /** RegularExpression Id. */
-  int CONSTANT = 43;
+  int CHAR = 43;
   /** RegularExpression Id. */
-  int DIGIT = 44;
+  int CONSTANT = 44;
   /** RegularExpression Id. */
-  int LETTER = 45;
+  int DIGIT = 45;
+  /** RegularExpression Id. */
+  int LETTER = 46;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -130,6 +132,7 @@ public interface RobotConstants {
     "\"Repeat\"",
     "\"Facing\"",
     "\"Blocked\"",
+    "\"Can-pick\"",
     "\"Can-put\"",
     "\"Can-move\"",
     "\"IsZero\"",
