@@ -114,7 +114,7 @@ salida = "Command: Defvar";
       jj_consume_token(GO);
       jj_consume_token(LB);
       x = num();
-      jj_consume_token(47);
+      jj_consume_token(48);
       y = num();
       jj_consume_token(RB);
 world.setPostion(x,y);salida = "Command:GO ";
@@ -173,14 +173,14 @@ world.putBalloons(f); salida = "Command:  Put Balloons";
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case CHIPS:{
       jj_consume_token(CHIPS);
-      jj_consume_token(47);
+      jj_consume_token(48);
       f = num();
 world.pickChips(f);salida = "Command:  Pick chips";
       break;
       }
     case BALLOONS:{
       jj_consume_token(BALLOONS);
-      jj_consume_token(47);
+      jj_consume_token(48);
       f = num();
 world.grabBalloons(f);salida="Command:  Pick balloons";
       break;
@@ -629,8 +629,8 @@ conde= recogerBallons(x);
     case CANMOVE:{
       jj_consume_token(CANMOVE);
       jj_consume_token(Q);
-      apuntarDic();
-
+      jj_consume_token(DP);
+if(canMove()) { conde = true; } else { conde = false; }
       break;
       }
     case ZERO:{
@@ -657,15 +657,13 @@ if (x!= 0) { conde= false; }else { conde= true; }
       jj_consume_token(-1);
       throw new ParseException();
     }
+{if ("" != null) return conde;}
     throw new Error("Missing return statement in function");
 }
 
   final public void laCondicion() throws ParseException {
     jj_consume_token(IF);
-    jj_consume_token(LB);
-    condiciones();
-    jj_consume_token(RB);
-    todo();
+if  (condiciones()) { todo(); } else { todo(); }
 }
 
   final public boolean recogerChips(int a) throws ParseException {
@@ -679,6 +677,15 @@ int chi = world.chipsToPick();
 int globos = world.countBalloons(world.getPosition());
   if (globos >= a) { {if ("" != null) return true;}}
   else { {if ("" != null) return false;}}
+    throw new Error("Missing return statement in function");
+}
+
+  final public boolean canMove() throws ParseException {
+int mirando = world.getFacing();
+  apuntarDic();
+  boolean puede = !bloqueado();
+  while(world.getFacing() != mirando) {world.turnRight(); }
+  {if ("" != null) return puede;}
     throw new Error("Missing return statement in function");
 }
 
@@ -723,6 +730,29 @@ try {
     throw new Error("Missing return statement in function");
 }
 
+  final public void ciclo() throws ParseException {
+    jj_consume_token(LB);
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case REPEAT:{
+      jj_consume_token(REPEAT);
+      num();
+      todo();
+      break;
+      }
+    case LOOP:{
+      jj_consume_token(LOOP);
+      condiciones();
+      todo();
+      break;
+      }
+    default:
+      jj_la1[26] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+    jj_consume_token(RB);
+}
+
   /** Generated Token Manager. */
   public RobotTokenManager token_source;
   SimpleCharStream jj_input_stream;
@@ -732,7 +762,7 @@ try {
   public Token jj_nt;
   private int jj_ntk;
   private int jj_gen;
-  final private int[] jj_la1 = new int[26];
+  final private int[] jj_la1 = new int[27];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -740,10 +770,10 @@ try {
 	   jj_la1_init_1();
 	}
 	private static void jj_la1_init_0() {
-	   jj_la1_0 = new int[] {0x10000000,0x10000000,0x10000001,0x3efe0,0x0,0x0,0x0,0x0,0x420,0xb00000,0x6000,0x780000,0xf000000,0x0,0x0,0x28000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xc0000000,0xf000000,};
+	   jj_la1_0 = new int[] {0x10000000,0x10000000,0x10000001,0x3efe0,0x0,0x0,0x0,0x0,0x420,0xb00000,0x6000,0x780000,0xf000000,0x0,0x0,0x28000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x80000000,0xf000000,0x60000000,};
 	}
 	private static void jj_la1_init_1() {
-	   jj_la1_1 = new int[] {0x40,0x40,0x40,0x0,0x600,0x600,0x1800,0x1800,0x0,0x0,0x0,0x0,0x0,0x1800,0x1800,0x0,0x20,0x1800,0x600,0x1800,0x1800,0x600,0x1800,0x1800,0xf,0x0,};
+	   jj_la1_1 = new int[] {0x80,0x80,0x80,0x0,0xc00,0xc00,0x3000,0x3000,0x0,0x0,0x0,0x0,0x0,0x3000,0x3000,0x0,0x40,0x3000,0xc00,0x3000,0x3000,0xc00,0x3000,0x3000,0x1f,0x0,0x0,};
 	}
 
   /** Constructor with InputStream. */
@@ -757,7 +787,7 @@ try {
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 26; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 27; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -771,7 +801,7 @@ try {
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 26; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 27; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -781,7 +811,7 @@ try {
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 26; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 27; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -799,7 +829,7 @@ try {
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 26; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 27; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -808,7 +838,7 @@ try {
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 26; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 27; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -817,7 +847,7 @@ try {
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 26; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 27; i++) jj_la1[i] = -1;
   }
 
   private Token jj_consume_token(int kind) throws ParseException {
@@ -868,12 +898,12 @@ try {
   /** Generate ParseException. */
   public ParseException generateParseException() {
 	 jj_expentries.clear();
-	 boolean[] la1tokens = new boolean[48];
+	 boolean[] la1tokens = new boolean[49];
 	 if (jj_kind >= 0) {
 	   la1tokens[jj_kind] = true;
 	   jj_kind = -1;
 	 }
-	 for (int i = 0; i < 26; i++) {
+	 for (int i = 0; i < 27; i++) {
 	   if (jj_la1[i] == jj_gen) {
 		 for (int j = 0; j < 32; j++) {
 		   if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -885,7 +915,7 @@ try {
 		 }
 	   }
 	 }
-	 for (int i = 0; i < 48; i++) {
+	 for (int i = 0; i < 49; i++) {
 	   if (la1tokens[i]) {
 		 jj_expentry = new int[1];
 		 jj_expentry[0] = i;

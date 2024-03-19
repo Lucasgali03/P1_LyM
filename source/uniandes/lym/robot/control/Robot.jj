@@ -96,6 +96,7 @@ TOKEN [IGNORE_CASE]: /* Nombres de Comandos */
 
         |< IF:"If" >
         |< REPEAT:"Repeat" >
+        | < LOOP:"Loop" >
 
         | < FACING:"Facing" >
         | < BLOCKED:"Blocked" >
@@ -374,14 +375,14 @@ boolean condiciones(): { }
   
   | < CANPICK ><Q >(< CHIPS > (x=getValor()|x=num()) { conde= recogerChips(x); }
   					|<BALLOONS>)(x=getValor()|x=num()) { conde= recogerBallons(x);}
-  | < CANMOVE ><Q > apuntarDic() { }
+  | < CANMOVE ><Q > <DP > {if(canMove()) { conde = true; } else { conde = false; } }
   | < ZERO > (x=getValor()|x=num()) {if (x!= 0) { conde= false; }else { conde= true; } }
-)  
+) {return conde; }
   }
 void laCondicion(): { }
 // falta revisar como hacer cuando la condicion sea falsa
-{< IF ><LB > condiciones() < RB > todo()
-
+{< IF > { if  (condiciones()) { todo(); } else { todo(); } }
+	
 }
 boolean recogerChips(int a ): { }
 { {int chi = world.chipsToPick();
@@ -398,6 +399,18 @@ boolean recogerBallons(int a ): { }
 	
 }
 }
+
+boolean canMove(): { }
+{
+  {int mirando = world.getFacing();
+  apuntarDic();
+  boolean puede = !bloqueado();
+  while(world.getFacing() != mirando) {world.turnRight(); }
+  return puede; 
+  }
+}
+
+
 boolean bloqueado(): { }
 { {try {
   world.moveForward(1,false);
@@ -420,7 +433,12 @@ boolean dondeve(): { }
 }
 
 	
-
+void ciclo(): { }
+{
+	< LB >(< REPEAT >num()todo()
+	| < LOOP >condiciones()todo())
+	< RB >
+}
 
 
 
